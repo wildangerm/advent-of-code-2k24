@@ -6,7 +6,7 @@ class Day6(inputFile: String = "input_6.txt") : BaseDay(inputFile) {
 
     override fun part1(): Any {
         val map = Map(inputList)
-        return println(map.traceRoute().toHashSet().size)
+        return println(map.traceRoute().map { it.toPair() }.toHashSet().size)
     }
 
     override fun part2(): Any {
@@ -30,14 +30,14 @@ class Day6(inputFile: String = "input_6.txt") : BaseDay(inputFile) {
             maxX = map[0].size - 1
         }
 
-        fun traceRoute(): MutableList<Pair<Int, Int>> {
+        fun traceRoute(): MutableList<Triple<Int, Int, Orientation>> {
             var (y, x) = findGuardStartingPosition()
             var orientation = Orientation.UP
-            val positionsVisited = mutableListOf(Pair(y, x))
+            val positionsVisited = mutableListOf(Triple(y, x, orientation))
 
             while (y in 0..maxY && x in 0..maxX) {
                 // trying to step
-                val newPos = Pair(y, x).add(orientation.step)
+                val newPos = Triple(y, x, orientation).add(orientation.step)
 
                 // step or turn
                 if (newPos.first in 0..maxY && newPos.second in 0..maxX) {
@@ -56,43 +56,39 @@ class Day6(inputFile: String = "input_6.txt") : BaseDay(inputFile) {
             return positionsVisited
         }
 
-        fun traceRoute2(positionsVisitedInRoute: MutableList<Pair<Int, Int>>): Int {
+        fun traceRoute2(positionsVisitedInRoute: MutableList<Triple<Int, Int, Orientation>>): Int {
             val (y, x) = positionsVisitedInRoute.removeAt(0)
             val startingOrientation = Orientation.UP
             var countOfLoops = 0
 
 
-            positionsVisitedInRoute.toHashSet().forEach { position ->
+            positionsVisitedInRoute.map { it.toPair() }.toHashSet().forEach { position ->
                 val map2 = map.map { it.toMutableList() }.toMutableList()
                 map2[position.first][position.second] = '#'
                 var newY = y
                 var newX = x
                 var orientation = startingOrientation
 
-                val positionsVisited = hashSetOf(Pair(y, x))
-                var positionsVisitedDidntGrowUninterrupted = 0
+                val positionsVisited = hashSetOf(Triple(y, x, orientation))
 
                 while (newY in 0..maxY && newX in 0..maxX) {
                     // trying to step
-                    val newPos = Pair(newY, newX).add(orientation.step)
+                    val newPos = Triple(newY, newX, orientation).add(orientation.step)
 
                     // step or turn
                     if (newPos.first in 0..maxY && newPos.second in 0..maxX) {
                         if (map2[newPos.first][newPos.second] != '#') {
                             newY = newPos.first
                             newX = newPos.second
-                            val added = positionsVisited.add(newPos)
-                            if (!added) {
-                                positionsVisitedDidntGrowUninterrupted++
-                            } else {
-                                positionsVisitedDidntGrowUninterrupted = 0
+
+                            // In a loop, if we are at the same place, same orientation as sometime before
+                            if (positionsVisited.contains(newPos)) {
+                                countOfLoops++
+                                break
                             }
+                            positionsVisited.add(newPos)
                         } else {
                             orientation = turn90Right(orientation)
-                        }
-                        if (positionsVisitedDidntGrowUninterrupted > positionsVisitedInRoute.size + positionsVisited.size) {
-                            countOfLoops++
-                            break
                         }
                     } else {
                         break
@@ -123,9 +119,13 @@ class Day6(inputFile: String = "input_6.txt") : BaseDay(inputFile) {
             return Pair(-1, -1)
         }
 
-        private fun Pair<Int, Int>.add(other: Pair<Int, Int>): Pair<Int, Int> {
-            return Pair(this.first + other.first, this.second + other.second)
+        private fun Triple<Int, Int, Orientation>.add(other: Pair<Int, Int>): Triple<Int, Int, Orientation> {
+            return Triple(this.first + other.first, this.second + other.second, this.third)
         }
+    }
+
+    companion object {
+        fun <A, B, C> Triple<A, B, C>.toPair(): Pair<A, B> { return Pair(this.first, this.second) }
     }
 
     enum class Orientation(val step: Pair<Int, Int>) {
