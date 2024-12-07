@@ -44,13 +44,13 @@ class Day7(inputFile: String = "input_7.txt") : BaseDay(inputFile) {
             if (!isConcatInPlay) {
                 possibleOperations.remove(Operator.CONCAT)
             }
-            val operatorPermutations = permutations(possibleOperations, operatorPlaces.toDouble())
+            val operatorCombinations = combinations(possibleOperations, operatorPlaces.toDouble())
 
-            for (operatorPermutation in operatorPermutations) {
+            for (operatorCombination in operatorCombinations) {
                 var result = numbers.first()
 
                 for (number in numbers.filterIndexed { i, _ -> i != 0 }) {
-                    val currentOperator = operatorPermutation.removeAt(0)
+                    val currentOperator = operatorCombination.removeAt(0)
                     when (currentOperator) {
                         Operator.ADD -> result += number
                         Operator.MULTIPLY -> result *= number
@@ -73,12 +73,12 @@ class Day7(inputFile: String = "input_7.txt") : BaseDay(inputFile) {
             return null
         }
 
-        private fun <T> permutations(list: List<T>, size: Double): List<MutableList<T>> {
+        private fun <T> combinations(list: List<T>, size: Double): List<MutableList<T>> {
             if (size == 1.0) return list.map { mutableListOf(it) }
             val result = mutableListOf<MutableList<T>>()
             for (item in list) {
-                for (perm in permutations(list, size - 1.0)) {
-                    result.add((mutableListOf(item) + perm).toMutableList())
+                for (comb in combinations(list, size - 1.0)) {
+                    result.add((mutableListOf(item) + comb).toMutableList())
                 }
             }
             return result
