@@ -42,7 +42,7 @@ class Day10(inputFile: String = "input_10.txt") : BaseDay(inputFile) {
                 trailheadScores += if (scoreBasedOnDistinctTrails) {
                     reachedTops.size
                 } else {
-                    reachedTops.toHashSet().size
+                    reachedTops.toSet().size
                 }
             }
 
