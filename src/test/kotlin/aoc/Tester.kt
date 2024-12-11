@@ -54,9 +54,9 @@ class Tester {
 //                  Arguments.of(Day9(), 6382875730645, 6420913943576)
 //                  Arguments.of(Day9(getTestFileName(9)), 1928L, 2858L)
 //                  Arguments.of(Day10(), 548, 1252)
-                  Arguments.of(Day10(getTestFileName(10)), 36, 81)
-//                      Arguments.of(Day11(), null, null)
-//                  Arguments.of(Day11(getTestFileName(11)), 10605L, 2713310158L)
+//                  Arguments.of(Day10(getTestFileName(10)), 36, 81)
+//                      Arguments.of(Day11(), 187738, 223767210249237)
+                  Arguments.of(Day11(getTestFileName(11)), 55312, null)
 //                Arguments.of(Day12(), null, null)
 //                Arguments.of(Day12(getTestFileName(12)), 31, null)
 
